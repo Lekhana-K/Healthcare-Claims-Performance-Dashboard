@@ -1,0 +1,61 @@
+Approval Rate = 
+VAR ApprovedClaims = CALCULATE([Total Claims Processed], 'enhanced_health_insurance_claims'[ClaimStatus] = "Approved")
+VAR TotalClaims = [Total Claims Processed]
+RETURN DIVIDE(ApprovedClaims, TotalClaims, 0)
+
+Approval TArget = 0.30
+
+Average Claim Amount = AVERAGE('enhanced_health_insurance_claims'[ClaimAmount])
+
+Average Paid Amount per Claim = 
+DIVIDE (
+    [Total Amount Paid],
+    CALCULATE ( [Total Claims Processed], 'enhanced_health_insurance_claims'[ClaimStatus] = "Approved" )
+)
+
+Denial Rate = 
+VAR DeniedClaims =
+    CALCULATE (
+        [Total Claims Processed],
+        'enhanced_health_insurance_claims'[ClaimStatus] = "Denied"
+    )
+VAR TotalClaimsForContext = [Total Claims Processed]
+RETURN
+    DIVIDE ( DeniedClaims, TotalClaimsForContext )
+
+Denial Traget = 0.36
+
+Denied Claims = 
+CALCULATE (
+    [Total Claims Processed],
+    'enhanced_health_insurance_claims'[ClaimStatus] = "Denied"
+)
+
+Pending Claims = 
+CALCULATE(
+    [Total Claims Processed],
+    'enhanced_health_insurance_claims'[ClaimStatus] = "Pending"
+)
+
+Total Amount Denied = 
+CALCULATE (
+    SUM ( 'enhanced_health_insurance_claims'[ClaimAmount] ),
+    'enhanced_health_insurance_claims'[ClaimStatus] = "Denied"
+)
+
+Total Amount Paid = 
+CALCULATE (
+    SUM('enhanced_health_insurance_claims'[ClaimAmount]),
+    'enhanced_health_insurance_claims'[ClaimStatus] = "Approved"
+)
+
+
+Total Claims Processed = COUNT('enhanced_health_insurance_claims'[ClaimID])
+
+Total Submitted Amount = SUM('enhanced_health_insurance_claims'[ClaimAmount])
+
+Dates = 
+CALENDAR (
+    MIN ( 'enhanced_health_insurance_claims'[ClaimDate] ),
+    MAX ( 'enhanced_health_insurance_claims'[ClaimDate] )
+)
